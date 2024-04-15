@@ -1,0 +1,34 @@
+# Directories
+.vs/
+bin/
+obj/
+Migrations/
+
+# Files
+*.user
+*.suo
+*.cache
+*.csproj.user
+*.csproj.nuget.dgspec.json
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+*.csproj.AssemblyReference.cache
+*.lastbuildstate
+*.log
+*.vspscc
+*.vssscc
+*.bak
+*.tmp
+*.dll
+*.pdb
+*.exe
+*.sln.docstates
+*.sln.ide/
+
+# Secret configuration files
+appsettings.json
+appsettings.Development.json
+
+# Other
+.DS_Store
+Thumbs.db

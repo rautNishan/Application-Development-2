@@ -1,0 +1,1 @@
+ <GenerateDocumentationFile>true</GenerateDocumentationFile> (This is for creating example in dots.)
