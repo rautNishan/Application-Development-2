@@ -1,4 +1,4 @@
-﻿namespace CourseWork.Common.Constants.Roles
+﻿namespace CourseWork.Common.Constants
 {
     public enum Roles
     {

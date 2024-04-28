@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CourseWork.Modules.User.Controller
 {
     [ApiExplorerSettings(GroupName = "user")] //Provides metadata about the API Explorer group that an action belongs to.
-    [Route("api/user/")]
+    [Tags("Users")]
+    [Route("api/user/user/")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -18,7 +19,7 @@ namespace CourseWork.Modules.User.Controller
 
 
 
-        [HttpPost("Register")]
+        [HttpPost("register")]
         [Authorize]
         public async Task<IActionResult> CreateUser(UserCreateDto incomingData)
         {

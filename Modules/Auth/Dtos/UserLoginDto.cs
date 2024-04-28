@@ -1,8 +1,7 @@
-﻿namespace CourseWork.Modules.User.Dtos
+﻿namespace CourseWork.Modules.Auth.Dtos
 {
-    public record UserCreateDto
+    public record UserLoginDto
     {
-        public required string Name { get; set; }
         public required string UserName { get; set; }
         public required string Password { get; set; }
     }

@@ -1,3 +1,5 @@
+using CourseWork.Common.Middlewares.Errors;
+using CourseWork.Modules.Auth.Services;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
 using Microsoft.EntityFrameworkCore;
@@ -47,10 +49,11 @@ builder.Services.AddSwaggerGen(c => //swaggerGen method takes a configuration ac
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 
-
+//Auth Injectable
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
-
+app.UseMiddleware<ErrorFilter>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
