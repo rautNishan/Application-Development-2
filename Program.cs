@@ -1,4 +1,5 @@
 using CourseWork.Common.Middlewares.Errors;
+using CourseWork.Common.Middlewares.Response;
 using CourseWork.Modules.Auth.Services;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
@@ -54,6 +55,8 @@ builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 app.UseMiddleware<ErrorFilter>();
+app.UseMiddleware<ResponseInterceptor>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

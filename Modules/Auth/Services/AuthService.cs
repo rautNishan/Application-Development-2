@@ -16,7 +16,6 @@ namespace CourseWork.Modules.Auth.Services
         }
         public string Login(BaseUserEntity entity, UserLoginDto incomingData)
         {
-            _logger.LogInformation("Incoming Data in AuthService: {Data}", incomingData);
             bool isPasswordCorrect = checkPassword(entity, incomingData.Password);
             if (!isPasswordCorrect)
             {
@@ -28,12 +27,7 @@ namespace CourseWork.Modules.Auth.Services
 
         public bool checkPassword(BaseUserEntity entity, string incomingPassword)
         {
-            if (entity.Password == incomingPassword)
-            {
-                return true;
-            }
-            return false;
-
+            return BCrypt.Net.BCrypt.Verify(incomingPassword, entity.Password);
         }
     }
 

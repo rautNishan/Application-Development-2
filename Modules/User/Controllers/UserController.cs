@@ -20,11 +20,19 @@ namespace CourseWork.Modules.User.Controller
 
 
         [HttpPost("register")]
-        [Authorize]
         public async Task<IActionResult> CreateUser(UserCreateDto incomingData)
         {
-            var result = await _userService.CreateUser(incomingData);
-            return Ok(result);
+            try
+            {
+                var result = await _userService.CreateUser(incomingData);
+                // return Created($"/api/users/{result.Id}", result);
+                HttpContext.Items["CustomMessage"] = "User Created Successfully";
+                return Created("", result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
