@@ -36,7 +36,7 @@ namespace CourseWork.Modules.Auth.Controllers
                     throw new HttpException(HttpStatusCode.NotFound, "User Not Found");
                 }
                 HttpContext.Items["CustomMessage"] = "User LoggedIn Successfully";
-                return Ok(_authService.Login(user, incomingData));
+                return Ok(_authService.Login(user, incomingData, "user"));
 
             }
             catch (Exception)

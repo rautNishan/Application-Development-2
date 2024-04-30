@@ -1,4 +1,5 @@
-﻿using CourseWork.Modules.User.Dtos;
+﻿using CourseWork.Common.Middlewares.Auth;
+using CourseWork.Modules.User.Dtos;
 using CourseWork.Modules.User.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace CourseWork.Modules.User.Controller
 
 
         [HttpPost("register")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<IActionResult> CreateUser(UserCreateDto incomingData)
         {
             try

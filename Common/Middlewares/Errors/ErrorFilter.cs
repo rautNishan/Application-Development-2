@@ -71,3 +71,4 @@ namespace CourseWork.Common.Middlewares.Errors
     }
 
 }
+

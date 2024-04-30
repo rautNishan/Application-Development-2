@@ -1,9 +1,10 @@
 ﻿using System.Net;
 using CourseWork.Common.Exceptions;
 using CourseWork.Modules.User.Dtos;
-using CourseWork.Modules.User.Entity;
+using CourseWork.Common.Middlewares.Auth;
 using CourseWork.Modules.User.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CourseWork.Modules.User.Controller
 {
@@ -22,6 +23,8 @@ namespace CourseWork.Modules.User.Controller
 
 
         [HttpPost("register")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+
         public async Task<IActionResult> CreateUser(UserCreateDto incomingData)
         {
             try

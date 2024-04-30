@@ -29,6 +29,7 @@ namespace CourseWork.Modules.User.Services
                 throw new HttpException(HttpStatusCode.Conflict, "User Already Exists");
             }
 
+
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
             _logger.LogInformation("Hashed Password: " + hashedPassword);
 

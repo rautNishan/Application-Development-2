@@ -10,12 +10,14 @@ namespace CourseWork.Common.database.Base_Repository
         protected readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
 
+
         public BaseRepository(DbContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();
         }
 
+        //CRUD
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
@@ -132,10 +134,10 @@ namespace CourseWork.Common.database.Base_Repository
             {
                 _context.Update(entity);
                 await _context.SaveChangesAsync();
-               
+
             }
-             return entity;
+            return entity;
         }
-        
+
     }
 }
