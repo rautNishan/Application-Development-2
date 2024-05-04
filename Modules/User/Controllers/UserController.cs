@@ -21,7 +21,7 @@ namespace CourseWork.Modules.User.Controller
 
 
         [HttpPost("register")]
-        [ServiceFilter(typeof(RoleAuthFilter))]
+        // [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<IActionResult> CreateUser(UserCreateDto incomingData)
         {
             try
