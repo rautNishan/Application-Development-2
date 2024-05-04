@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<MyAppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppConnectionString")));
 
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -81,10 +83,24 @@ builder.Services.AddScoped<RoleAuthFilter>();
 builder.Services.AddScoped<AdminRepository>();
 builder.Services.AddScoped<AdminService>();
 
+// Define CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
+
 var app = builder.Build();
+// Apply CORS middleware
+app.UseCors("AllowAnyOrigin");
+
 app.UseMiddleware<ErrorFilter>();
 app.UseMiddleware<ResponseInterceptor>();
 
+//Seeding Admin
 using (var scope = app.Services.CreateScope())
 {
     var adminService = scope.ServiceProvider.GetRequiredService<AdminService>();

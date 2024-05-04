@@ -30,11 +30,24 @@ namespace CourseWork.Modules.Auth.Controllers
         {
             try
             {
-                UserEntity? user = await _userService.FindOne(incomingData.UserName);
+                UserEntity? user = null;
+
+                if (incomingData.UserName != null)
+                {
+                    user = await _userService.FindOneByUserName(incomingData.UserName);
+                }
+
+                if (incomingData.Email != null)
+                {
+
+                    user = await _userService.FindOneByEmail(incomingData.Email);
+                }
+
                 if (user == null)
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "User Not Found");
                 }
+
                 HttpContext.Items["CustomMessage"] = "User LoggedIn Successfully";
                 return Ok(_authService.Login(user, incomingData, "user"));
 
