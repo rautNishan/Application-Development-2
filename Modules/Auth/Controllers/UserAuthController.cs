@@ -65,7 +65,7 @@ namespace CourseWork.Modules.Auth.Controllers
         }
 
         [HttpGet("verify-email/{email}")]
-        public async Task<UserResponseDto> VerifyEmail(string email)
+        public async Task<IActionResult> VerifyEmail(string email)
         {
             //Decode Email
             email = WebUtility.UrlDecode(email);
@@ -81,7 +81,8 @@ namespace CourseWork.Modules.Auth.Controllers
             UserEntity updatedData = await _userService.ActivateUser(existingUser);
             UserResponseDto responseData = new UserResponseDto { Id = updatedData.id };
             HttpContext.Items["CustomMessage"] = "User Created Successfully";
-            return responseData;
+            //Redirect user to login page in frontend
+            return Created("http://localhost:3000/login", responseData);
         }
 
     }
