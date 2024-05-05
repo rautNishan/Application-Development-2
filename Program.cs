@@ -1,3 +1,4 @@
+using CourseWork.Common.Helper.EmailService;
 using CourseWork.Common.Middlewares.Auth;
 using CourseWork.Common.Middlewares.Errors;
 using CourseWork.Common.Middlewares.Response;
@@ -6,6 +7,7 @@ using CourseWork.Modules.Admin.Services;
 using CourseWork.Modules.Auth.Services;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
+using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -83,6 +85,11 @@ builder.Services.AddScoped<RoleAuthFilter>();
 builder.Services.AddScoped<AdminRepository>();
 builder.Services.AddScoped<AdminService>();
 
+
+//Helper Injectable
+builder.Services.AddScoped<EmailService>();
+
+
 // Define CORS policy
 builder.Services.AddCors(options =>
 {
@@ -125,4 +132,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+DotEnv.Load();
 app.Run();

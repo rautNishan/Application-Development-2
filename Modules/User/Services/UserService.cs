@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using CourseWork.Common.Exceptions;
+using CourseWork.Common.Helper.EmailService;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Dtos;
 using CourseWork.Modules.User.Entity;
@@ -11,17 +12,18 @@ namespace CourseWork.Modules.User.Services
         private readonly UserRepository _userRepo;
 
         private readonly ILogger<UserService> _logger;
-        public UserService(UserRepository userRepo, ILogger<UserService> logger)
+
+        private readonly EmailService _emailService;
+        public UserService(UserRepository userRepo, ILogger<UserService> logger, EmailService emailService)
         {
             _userRepo = userRepo;
             _logger = logger;
+            _emailService = emailService;
         }
 
 
         public async Task<UserEntity> CreateUser(UserCreateDto data)
         {
-            //Verify if Email is Legit or not
-
             //Check if that user is already registered or not
             //Even user name exists or email exists throw error
             UserEntity? existingUser = await _userRepo.FindOne(x => x.UserName == data.UserName || x.Email == data.Email);
@@ -32,6 +34,7 @@ namespace CourseWork.Modules.User.Services
                 throw new HttpException(HttpStatusCode.Conflict, "User Already Exists");
             }
 
+            await _emailService.SendVerificationEmail(data.Email, data.UserName, $"https://localhost:7251/api/user/auth/verify-email/{WebUtility.UrlEncode(data.Email)}");
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
             _logger.LogInformation("Hashed Password: " + hashedPassword);
@@ -41,6 +44,12 @@ namespace CourseWork.Modules.User.Services
             UserEntity createdUser = await _userRepo.CreateAsync(userDataToSend, true);
 
             return createdUser;
+        }
+
+        public async Task<UserEntity> ActivateUser(UserEntity entity)
+        {
+            UserEntity updatedUser = await _userRepo.UpdateAsync(entity);
+            return updatedUser;
         }
         public async Task<UserEntity?> GetUserByIdAsync(int id)
         {
