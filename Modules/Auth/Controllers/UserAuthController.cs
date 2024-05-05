@@ -82,7 +82,7 @@ namespace CourseWork.Modules.Auth.Controllers
             UserResponseDto responseData = new UserResponseDto { Id = updatedData.id };
             HttpContext.Items["CustomMessage"] = "User Created Successfully";
             //Redirect user to login page in frontend
-            return Created("http://localhost:3000/login", responseData);
+            return Redirect("http://localhost:3000/login");
         }
 
     }
