@@ -4,6 +4,7 @@ bin/
 obj/
 
 .env
+
 # Files
 *.user
 *.suo
