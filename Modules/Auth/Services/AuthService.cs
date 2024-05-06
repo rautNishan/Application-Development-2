@@ -58,15 +58,14 @@ namespace CourseWork.Modules.Auth.Services
         }
         private string GenerateToken(string userId, string role)
         {
-            _logger.LogInformation("This is UserId: " + userId);
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, userId),
-                new Claim(ClaimTypes.Role, role)
+                new Claim("userId", userId),
+                new Claim("role", role)
             }),
                 Expires = DateTime.UtcNow.AddHours(1), // Token expiration time
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey)), SecurityAlgorithms.HmacSha256Signature)

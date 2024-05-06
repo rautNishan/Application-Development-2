@@ -5,6 +5,8 @@ using CourseWork.Common.Middlewares.Response;
 using CourseWork.Modules.Admin.Repository;
 using CourseWork.Modules.Admin.Services;
 using CourseWork.Modules.Auth.Services;
+using CourseWork.Modules.Blogs.Repository;
+using CourseWork.Modules.Blogs.Services;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
 using dotenv.net;
@@ -85,6 +87,9 @@ builder.Services.AddScoped<RoleAuthFilter>();
 builder.Services.AddScoped<AdminRepository>();
 builder.Services.AddScoped<AdminService>();
 
+//Blogs Injectable
+builder.Services.AddScoped<BlogRepository>();
+builder.Services.AddScoped<BlogService>();
 
 //Helper Injectable
 builder.Services.AddScoped<EmailService>();

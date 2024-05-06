@@ -30,8 +30,7 @@ namespace CourseWork.Modules.Auth.Controllers
         {
             try
             {
-                _logger.LogInformation("Admin Login");
-                _logger.LogInformation($"This is Incoming Data:" + incomingData);
+
                 if (incomingData.Email != null)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Admin cannot login with email");

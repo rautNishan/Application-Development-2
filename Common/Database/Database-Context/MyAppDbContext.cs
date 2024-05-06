@@ -1,4 +1,5 @@
 ﻿using CourseWork.Modules.Admin.Entity;
+using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.User.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,10 @@ public class MyAppDbContext : DbContext
     //For Migration to work
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<AdminEntity> Admin { get; set; }
+    public DbSet<BlogEntity> Blogs { get; set; }
+
+    public DbSet<BlogComment> BlogComments { get; set; }
+
 
     public MyAppDbContext(DbContextOptions<MyAppDbContext> options)
         : base(options)
@@ -17,5 +22,6 @@ public class MyAppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<BlogEntity>().OwnsOne(b => b.PostUser); //Because it is not actual a existing table and only used as type
     }
 }

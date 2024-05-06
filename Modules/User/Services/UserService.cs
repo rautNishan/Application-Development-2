@@ -64,5 +64,7 @@ namespace CourseWork.Modules.User.Services
         {
             return await _userRepo.FindOne(x => x.Email == email);
         }
+
+
     }
 }

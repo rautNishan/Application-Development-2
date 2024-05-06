@@ -1,13 +1,17 @@
 ﻿using CourseWork.Common.database.Base_Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace CourseWork.Common.Database.Base_Entity
 {
     public class BaseUserEntity : BaseEntity
     {
-        public required string UserName { get; set; }
-        public required string Password { get; set; }
+        [Required]
+        public string UserName { get; set; }
 
-        public  bool? IsActive { get; set; }
+        [Required]
+        public string Password { get; set; }
+
+        public bool? IsActive { get; set; }
 
         public BaseUserEntity()
         {
