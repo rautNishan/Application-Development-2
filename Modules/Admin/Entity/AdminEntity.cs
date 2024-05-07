@@ -4,5 +4,6 @@ namespace CourseWork.Modules.Admin.Entity
 {
     public class AdminEntity : BaseUserEntity
     {
+       
     }
 }

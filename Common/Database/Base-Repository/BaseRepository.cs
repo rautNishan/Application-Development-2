@@ -1,11 +1,15 @@
 ﻿using System.Linq.Expressions;
+using CourseWork.Common.Constants.Enums;
 using CourseWork.Common.database.Base_Model;
 using CourseWork.Common.database.Interfaces;
+using CourseWork.Common.Database.Interfaces;
+using CourseWork.Common.Middlewares.Response;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CourseWork.Common.database.Base_Repository
 {
-    public class BaseRepository<T> : IDataBaseBaseInterface<T> where T : class
+    public class BaseRepository<T> : IDataBaseBaseInterface<T> where T : BaseEntity
     {
         protected readonly DbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -21,6 +25,33 @@ namespace CourseWork.Common.database.Base_Repository
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
+        }
+
+        public async Task<PaginatedResponse<T>> GetAllPaginatedAsync(int pageNumber, ShortByEnum shortBy)
+        {
+            int dataPerPage = 20; //Get through enum or constant
+            var totalCount = await _dbSet.CountAsync();
+            IQueryable<T> sortedData;
+
+
+            if (shortBy == ShortByEnum.Latest)
+            {
+                sortedData = _dbSet.OrderByDescending(entity => entity.CreatedAt);
+            }
+            else // SortOrder.Oldest
+            {
+                sortedData = _dbSet.OrderBy(entity => entity.CreatedAt);
+            }
+
+            IEnumerable<T> data = await sortedData.Skip((pageNumber - 1) * dataPerPage).Take(dataPerPage).ToListAsync();
+            return new PaginatedResponse<T>
+            {
+                PageNumber = pageNumber,
+                DataPerPage = dataPerPage,
+                TotalCount = totalCount,
+                Data = data,
+            };
+
         }
 
         public async Task<T?> FindByIdAsync(int id)

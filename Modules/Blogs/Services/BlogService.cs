@@ -1,12 +1,15 @@
 ﻿using System.Net;
+using CourseWork.Common.Constants.Enums;
 using CourseWork.Common.Dtos;
 using CourseWork.Common.Exceptions;
+using CourseWork.Common.Middlewares.Response;
 using CourseWork.Modules.Blogs.Dtos;
 using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.Blogs.Repository;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Entity;
 using CourseWork.Modules.User.Services;
+using Microsoft.OpenApi.Any;
 
 namespace CourseWork.Modules.Blogs.Services
 {
@@ -37,6 +40,40 @@ namespace CourseWork.Modules.Blogs.Services
                 PostUser = new UserInfo { UserId = incomingUserInfo.UserId, Name = incomingUserInfo.Name }
             };
             return await _blogRepo.CreateAsync(blogEntity);
+        }
+        public async Task<BlogEntity> UpdateBlogs(BlogUpdateDto incomingData, CommonUserDto incomingUserInfo, BlogEntity blogEntity)
+        {
+
+            if (incomingData.Title != null)
+            {
+                blogEntity.Title = incomingData.Title;
+            }
+            if (incomingData.Content != null)
+            {
+                blogEntity.Content = incomingData.Content;
+            }
+            if (incomingData.ImgUrl != null)
+            {
+                blogEntity.ImgUrl = incomingData.ImgUrl;
+            }
+
+            //This is Never Null
+            if (incomingUserInfo != null)
+            {
+                blogEntity.PostUser = new UserInfo { UserId = incomingUserInfo.UserId, Name = incomingUserInfo.Name };
+            }
+
+            return await _blogRepo.UpdateAsync(blogEntity);
+        }
+        public async Task<BlogEntity?> GetByIdAsync(int id)
+        {
+            return await _blogRepo.FindByIdAsync(id);
+        }
+
+        public async Task<PaginatedResponse<BlogEntity>> GetPaginatedBlogList(int pageNumber, ShortByEnum shortBy)
+        {
+            PaginatedResponse<BlogEntity> results = await _blogRepo.GetAllPaginatedAsync(pageNumber,shortBy);
+            return results;
         }
     }
 }

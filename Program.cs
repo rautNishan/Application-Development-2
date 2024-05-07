@@ -35,6 +35,7 @@ builder.Services.AddSwaggerGen(c => //swaggerGen method takes a configuration ac
         Scheme = "bearer"
     });
 
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
             {
@@ -58,6 +59,7 @@ builder.Services.AddSwaggerGen(c => //swaggerGen method takes a configuration ac
 
     // Swagger document for User APIs
     c.SwaggerDoc("user", new OpenApiInfo { Title = "User API", Version = "v1" });
+
 
 
     // Decides which controller action (Api Endpoints) should be included in the swagger documentation
