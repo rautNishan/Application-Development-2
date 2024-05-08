@@ -24,9 +24,14 @@ namespace CourseWork.Modules.Votes.Service
             return await _voteRepo.FindOne(entity => entity.BlogId == blogId && entity.VoteUser.UserId == userId);
         }
 
-        public async Task<VoteEntity?> FindVoteByUserAndBlogAndDecideToVote(int blogId, int userId, bool isUpVote)
+        // public async Task<VoteEntity?> FindVoteByUserAndBlogAndDecideToVote(int blogId, int userId, bool isUpVote)
+        // {
+        //     return await _voteRepo.FindOne(entity => entity.BlogId == blogId && entity.VoteUser.UserId == userId && entity.IsUpVote == isUpVote);
+        // }
+
+        public async Task<VoteEntity> UpdateVote(VoteEntity voteEntity)
         {
-            return await _voteRepo.FindOne(entity => entity.BlogId == blogId && entity.VoteUser.UserId == userId && entity.IsUpVote == isUpVote);
+            return await _voteRepo.UpdateAsync(voteEntity);
         }
     }
 }

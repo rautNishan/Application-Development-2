@@ -2,10 +2,10 @@
 using CourseWork.Common.Dtos;
 using CourseWork.Common.Exceptions;
 using CourseWork.Common.Middlewares.Auth;
-using CourseWork.Modules.Admin.Entity;
-using CourseWork.Modules.Admin.Services;
 using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.Blogs.Services;
+using CourseWork.Modules.User.Entity;
+using CourseWork.Modules.User.Services;
 using CourseWork.Modules.Votes.Dtos;
 using CourseWork.Modules.Votes.Entity;
 using CourseWork.Modules.Votes.Service;
@@ -13,25 +13,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CourseWork.Modules.Votes.Controller
 {
-    [ApiExplorerSettings(GroupName = "admin")]
+    [ApiExplorerSettings(GroupName = "user")]
     [Tags("Votes")]
-    [Route("api/admin/vote")]
-    public class AdminVoteController : ControllerBase
+    [Route("api/user/vote")]
+    public class UserVoteController : ControllerBase
     {
         private readonly VoteService _voteService;
-        private readonly AdminService _adminService;
+        private readonly UserService _userService;
 
         private readonly BlogService _blogService;
-        private readonly ILogger<AdminVoteController> _logger;
 
-        public AdminVoteController(AdminService adminService, BlogService blogService, VoteService voteService, ILogger<AdminVoteController> logger)
+        private readonly ILogger<UserVoteController> _logger;
+
+        public UserVoteController(UserService userService, BlogService blogService, VoteService voteService, ILogger<UserVoteController> logger)
         {
-            _adminService = adminService;
+            _userService = userService;
             _blogService = blogService;
             _voteService = voteService;
             _logger = logger;
         }
-
         [HttpPost("info/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetVoteResponseDto?> GetInfoAboutVotes(string blogId)
@@ -39,16 +39,16 @@ namespace CourseWork.Modules.Votes.Controller
             //First Get User Info
             string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
             int parseUserId = int.Parse(userId); // Convert the string to an int
-            AdminEntity? adminUser = await _adminService.GetUserByIdAsync(parseUserId);
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
 
-            if (adminUser == null)
+            if (user == null)
             {
-                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
             }
-            var adminInfo = new CommonUserDto()
+            var userInfo = new CommonUserDto()
             {
-                UserId = adminUser.id.ToString(),
-                Name = adminUser.UserName
+                UserId = user.id.ToString(),
+                Name = user.UserName
             };
 
             //Get Blog Info
@@ -60,7 +60,7 @@ namespace CourseWork.Modules.Votes.Controller
             }
 
             //Check if the user has already voted
-            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(userInfo.UserId));
             // if (existingVote != null)
             // {
             //     throw new HttpException(HttpStatusCode.BadRequest, "You have already voted");
@@ -82,16 +82,16 @@ namespace CourseWork.Modules.Votes.Controller
             //First Get User Info
             string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
             int parseUserId = int.Parse(userId); // Convert the string to an int
-            AdminEntity? adminUser = await _adminService.GetUserByIdAsync(parseUserId);
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
 
-            if (adminUser == null)
+            if (user == null)
             {
-                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
             }
-            var adminInfo = new CommonUserDto()
+            var userInfo = new CommonUserDto()
             {
-                UserId = adminUser.id.ToString(),
-                Name = adminUser.UserName
+                UserId = user.id.ToString(),
+                Name = user.UserName
             };
 
             //Get Blog Info
@@ -103,7 +103,7 @@ namespace CourseWork.Modules.Votes.Controller
             }
 
             //Check if the user has already voted
-            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(userInfo.UserId));
 
             _logger.LogInformation("Existing Vote" + existingVote);
 
@@ -139,7 +139,7 @@ namespace CourseWork.Modules.Votes.Controller
                 BlogId = blogInfo.id,
                 IsUpVote = true,
                 Blog = blogInfo,
-                VoteUser = new UserInfo { UserId = int.Parse(adminInfo.UserId), Name = adminInfo.Name },
+                VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
 
             };
 
@@ -167,16 +167,16 @@ namespace CourseWork.Modules.Votes.Controller
             //First Get User Info
             string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
             int parseUserId = int.Parse(userId); // Convert the string to an int
-            AdminEntity? adminUser = await _adminService.GetUserByIdAsync(parseUserId);
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
 
-            if (adminUser == null)
+            if (user == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
             }
-            var adminInfo = new CommonUserDto()
+            var userInfo = new CommonUserDto()
             {
-                UserId = adminUser.id.ToString(),
-                Name = adminUser.UserName
+                UserId = user.id.ToString(),
+                Name = user.UserName
             };
 
             //Get Blog Info
@@ -188,7 +188,7 @@ namespace CourseWork.Modules.Votes.Controller
             }
 
             //Check if the user has already voted
-            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(userInfo.UserId));
             _logger.LogInformation("Existing Vote" + existingVote);
             //Trying to downvote 
             //If it is the user has already up vote now change it to down vote
@@ -221,7 +221,7 @@ namespace CourseWork.Modules.Votes.Controller
                 BlogId = blogInfo.id,
                 IsUpVote = false,
                 Blog = blogInfo,
-                VoteUser = new UserInfo { UserId = int.Parse(adminInfo.UserId), Name = adminInfo.Name },
+                VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
 
             };
 
@@ -240,9 +240,5 @@ namespace CourseWork.Modules.Votes.Controller
             VoteResponseDto responseData = new VoteResponseDto { Id = blogInfo.id };
             return responseData;
         }
-
-
-
     }
 }
-
