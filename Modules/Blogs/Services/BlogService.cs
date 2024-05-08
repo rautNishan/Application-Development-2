@@ -35,9 +35,9 @@ namespace CourseWork.Modules.Blogs.Services
                 Title = incomingData.Title,
                 Content = incomingData.Content,
                 ImgUrl = incomingData.ImgUrl,
-                UpVote = incomingData.UpVote,
-                DownVote = incomingData.DownVote,
-                PostUser = new UserInfo { UserId = incomingUserInfo.UserId, Name = incomingUserInfo.Name }
+                // UpVote = incomingData.UpVote,
+                // DownVote = incomingData.DownVote,
+                PostUser = new UserInfo { UserId = int.Parse(incomingUserInfo.UserId), Name = incomingUserInfo.Name }
             };
             return await _blogRepo.CreateAsync(blogEntity);
         }
@@ -60,9 +60,15 @@ namespace CourseWork.Modules.Blogs.Services
             //This is Never Null
             if (incomingUserInfo != null)
             {
-                blogEntity.PostUser = new UserInfo { UserId = incomingUserInfo.UserId, Name = incomingUserInfo.Name };
+                blogEntity.PostUser = new UserInfo { UserId = int.Parse(incomingUserInfo.UserId), Name = incomingUserInfo.Name };
             }
 
+            return await _blogRepo.UpdateAsync(blogEntity);
+        }
+
+        //This is to call from other services
+        public async Task<BlogEntity> UpdateFormOtherService(BlogEntity blogEntity)
+        {
             return await _blogRepo.UpdateAsync(blogEntity);
         }
         public async Task<BlogEntity?> GetByIdAsync(int id)

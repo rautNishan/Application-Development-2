@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CourseWork.Common.database.Base_Model;
+using CourseWork.Modules.Votes.Entity;
 
 namespace CourseWork.Modules.Blogs.Entity
 {
@@ -12,15 +13,18 @@ namespace CourseWork.Modules.Blogs.Entity
 
         public required UserInfo PostUser { get; set; }
         public required string ImgUrl { get; set; }
-        public required int UpVote { get; set; }
-        public required int DownVote { get; set; }
+        public int UpVote { get; set; } = 0;
+        public int DownVote { get; set; } = 0;
+        public ICollection<VoteEntity> Votes { get; set; } = new List<VoteEntity>();
         public ICollection<BlogComment> Comments { get; set; } = new List<BlogComment>();
 
 
     }
     public class UserInfo()
     {
-        public required string UserId { get; set; }
+        public required int UserId { get; set; }
         public required string Name { get; set; }
     }
+
+
 }

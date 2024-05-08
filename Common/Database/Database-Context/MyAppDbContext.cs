@@ -1,6 +1,7 @@
 ﻿using CourseWork.Modules.Admin.Entity;
 using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.User.Entity;
+using CourseWork.Modules.Votes.Entity;
 using Microsoft.EntityFrameworkCore;
 
 public class MyAppDbContext : DbContext
@@ -12,6 +13,7 @@ public class MyAppDbContext : DbContext
     public DbSet<BlogEntity> Blogs { get; set; }
 
     public DbSet<BlogComment> BlogComments { get; set; }
+    public DbSet<VoteEntity> Votes { get; set; }
 
 
     public MyAppDbContext(DbContextOptions<MyAppDbContext> options)
@@ -23,5 +25,6 @@ public class MyAppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<BlogEntity>().OwnsOne(b => b.PostUser); //Because it is not actual a existing table and only used as type
+        modelBuilder.Entity<VoteEntity>().OwnsOne(b => b.VoteUser);
     }
 }

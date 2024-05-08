@@ -9,6 +9,8 @@ using CourseWork.Modules.Blogs.Repository;
 using CourseWork.Modules.Blogs.Services;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
+using CourseWork.Modules.Votes.Repository;
+using CourseWork.Modules.Votes.Service;
 using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -92,6 +94,10 @@ builder.Services.AddScoped<AdminService>();
 //Blogs Injectable
 builder.Services.AddScoped<BlogRepository>();
 builder.Services.AddScoped<BlogService>();
+
+//Vote Injectable
+builder.Services.AddScoped<VoteRepository>();
+builder.Services.AddScoped<VoteService>();
 
 //Helper Injectable
 builder.Services.AddScoped<EmailService>();

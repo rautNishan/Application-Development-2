@@ -1,0 +1,27 @@
+﻿using CourseWork.Common.Dtos;
+using CourseWork.Modules.Blogs.Entity;
+using CourseWork.Modules.Votes.Entity;
+using CourseWork.Modules.Votes.Repository;
+
+namespace CourseWork.Modules.Votes.Service
+{
+    public class VoteService
+    {
+        private readonly VoteRepository _voteRepo;
+
+        public VoteService(VoteRepository voteRepo)
+        {
+            _voteRepo = voteRepo;
+        }
+
+        public async Task<VoteEntity> CreateVote(VoteEntity voteEntity)
+        {
+            return await _voteRepo.CreateAsync(voteEntity);
+        }
+
+        public async Task<VoteEntity?> FindVoteByUserAndBlog(int blogId, int userId)
+        {
+            return await _voteRepo.FindOne(entity => entity.BlogId == blogId && entity.VoteUser.UserId == userId);
+        }
+    }
+}
