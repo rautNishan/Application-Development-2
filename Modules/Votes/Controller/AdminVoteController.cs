@@ -103,11 +103,29 @@ namespace CourseWork.Modules.Votes.Controller
             }
 
             //Check if the user has already voted
-            // VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
-            // if (existingVote != null)
-            // {
-            //     throw new HttpException(HttpStatusCode.BadRequest, "You have already voted");
-            // }
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
+
+
+            if (existingVote != null) //If the user has already voted
+            {
+                if (existingVote.IsUpVote == true)
+                {
+                    //If user has already upvote don't give again
+                    throw new HttpException(HttpStatusCode.BadRequest, "You have already down voted");
+                }
+
+                if (existingVote.IsUpVote == false)
+                {
+                    //Initial was upVote now change and it to downvote
+                    blogInfo.UpVote += 1;
+                    blogInfo.DownVote -= 1;
+                }
+            }
+            else
+            {
+                //If the user has not voted before
+                blogInfo.UpVote += 1;
+            }
             //todo
 
             //Create Vote
@@ -128,7 +146,6 @@ namespace CourseWork.Modules.Votes.Controller
             }
             _logger.LogInformation("Vote Created" + createdVote);
             //Updating the Blog
-            blogInfo.UpVote += 1;
             blogInfo.Votes.Add(createdVote);
             await _blogService.UpdateFormOtherService(blogInfo);
             HttpContext.Items["CustomMessage"] = "Upvote Successfully";
@@ -166,12 +183,29 @@ namespace CourseWork.Modules.Votes.Controller
             }
 
             //Check if the user has already voted
-            // VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
-            // if (existingVote != null)
-            // {
-            //     throw new HttpException(HttpStatusCode.BadRequest, "You have already voted");
-            // }
-            //todo
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndBlog(blogInfo.id, int.Parse(adminInfo.UserId));
+
+            //Trying to downvote 
+            //If it is the user has already up vote now change it to down vote
+            if (existingVote != null)
+            {
+                if (existingVote.IsUpVote == false)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "You have already down voted");
+                }
+
+                if (existingVote.IsUpVote == true)
+                {
+                    //Initial was upVote now change and it to downvote
+                    blogInfo.UpVote -= 1;
+                    blogInfo.DownVote += 1;
+                }
+            }
+            else
+            {
+                //If the user has not voted before
+                blogInfo.DownVote += 1;
+            }
 
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
@@ -191,7 +225,7 @@ namespace CourseWork.Modules.Votes.Controller
             }
             _logger.LogInformation("Vote Created" + createdVote);
             //Updating the Blog
-            blogInfo.DownVote += 1;
+
             blogInfo.Votes.Add(createdVote);
             await _blogService.UpdateFormOtherService(blogInfo);
             HttpContext.Items["CustomMessage"] = "DownVote Successfully";
