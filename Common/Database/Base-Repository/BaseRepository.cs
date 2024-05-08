@@ -30,17 +30,17 @@ namespace CourseWork.Common.database.Base_Repository
         public async Task<PaginatedResponse<T>> GetAllPaginatedAsync(int pageNumber, ShortByEnum shortBy)
         {
             int dataPerPage = 20; //Get through enum or constant
-            var totalCount = await _dbSet.CountAsync();
+            var totalCount = await _dbSet.Where(entity => entity.DeletedAt == null).CountAsync();
             IQueryable<T> sortedData;
 
 
             if (shortBy == ShortByEnum.Latest)
             {
-                sortedData = _dbSet.OrderByDescending(entity => entity.CreatedAt);
+                sortedData = _dbSet.Where(entity => entity.DeletedAt == null).OrderByDescending(entity => entity.CreatedAt);
             }
             else // SortOrder.Oldest
             {
-                sortedData = _dbSet.OrderBy(entity => entity.CreatedAt);
+                sortedData = _dbSet.Where(entity => entity.DeletedAt == null).OrderBy(entity => entity.CreatedAt);
             }
 
             IEnumerable<T> data = await sortedData.Skip((pageNumber - 1) * dataPerPage).Take(dataPerPage).ToListAsync();
@@ -56,12 +56,12 @@ namespace CourseWork.Common.database.Base_Repository
 
         public async Task<T?> FindByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dbSet.Where(entity => entity.DeletedAt == null).SingleOrDefaultAsync(entity => entity.id == id);
         }
 
         public async Task<T?> FindOne(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            return await _dbSet.Where(entity => entity.DeletedAt == null).FirstOrDefaultAsync(predicate);
         }
 
         public async Task<T> CreateAsync(T entity, bool UseTransaction = false)
@@ -144,6 +144,11 @@ namespace CourseWork.Common.database.Base_Repository
             }
         }
 
+        // public async Task<T> SoftDeleteAsync(T entity)
+        // {
+        //     return await UpdateAsync(entity);
+        // }
+
         public async Task<T> SoftDeleteAsync(T entity, bool useTransaction = false)
         {
             if (useTransaction)
@@ -168,6 +173,11 @@ namespace CourseWork.Common.database.Base_Repository
 
             }
             return entity;
+        }
+
+        public async Task<T?> FindByIdIncludingDeletedAsync(int id)
+        {
+            return await _dbSet.SingleOrDefaultAsync(entity => entity.id == id);
         }
 
     }
