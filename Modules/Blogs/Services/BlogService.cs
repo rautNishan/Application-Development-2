@@ -74,6 +74,7 @@ namespace CourseWork.Modules.Blogs.Services
         public async Task<BlogEntity?> GetByIdAsync(int id)
         {
             return await _blogRepo.FindByIdAsync(id);
+
         }
 
         public async Task<PaginatedResponse<BlogEntity>> GetPaginatedBlogList(int pageNumber, ShortByEnum shortBy)

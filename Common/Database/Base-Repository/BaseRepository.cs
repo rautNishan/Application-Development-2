@@ -56,6 +56,7 @@ namespace CourseWork.Common.database.Base_Repository
 
         public async Task<T?> FindByIdAsync(int id)
         {
+
             return await _dbSet.Where(entity => entity.DeletedAt == null).SingleOrDefaultAsync(entity => entity.id == id);
         }
 
@@ -179,6 +180,7 @@ namespace CourseWork.Common.database.Base_Repository
         {
             return await _dbSet.SingleOrDefaultAsync(entity => entity.id == id);
         }
+
 
     }
 }
