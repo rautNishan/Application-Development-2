@@ -123,7 +123,7 @@ namespace CourseWork.Modules.Auth.Controllers
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
                 }
-
+    
                 bool isPasswordCorrect = _authService.checkPassword(user, incomingData.OldPassword);
                 if (!isPasswordCorrect)
                 {
