@@ -349,7 +349,7 @@ namespace CourseWork.Modules.Votes.Controller
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
             {
-                CommentId = commentInfo.id,
+                CommentsId = commentInfo.id,
                 IsUpVote = true,
                 Comment = commentInfo,
                 VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },

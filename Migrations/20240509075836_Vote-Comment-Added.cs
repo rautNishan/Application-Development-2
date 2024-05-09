@@ -5,7 +5,7 @@
 namespace CourseWork.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCommentVotes : Migration
+    public partial class VoteCommentAdded : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,24 +23,22 @@ namespace CourseWork.Migrations
                 oldType: "int");
 
             migrationBuilder.AddColumn<int>(
-                name: "CommentId",
+                name: "CommentsId",
                 table: "Votes",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Votes_CommentId",
+                name: "IX_Votes_CommentsId",
                 table: "Votes",
-                column: "CommentId");
+                column: "CommentsId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Votes_BlogComments_CommentId",
+                name: "FK_Votes_BlogComments_CommentsId",
                 table: "Votes",
-                column: "CommentId",
+                column: "CommentsId",
                 principalTable: "BlogComments",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Votes_Blogs_BlogId",
@@ -54,7 +52,7 @@ namespace CourseWork.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Votes_BlogComments_CommentId",
+                name: "FK_Votes_BlogComments_CommentsId",
                 table: "Votes");
 
             migrationBuilder.DropForeignKey(
@@ -62,11 +60,11 @@ namespace CourseWork.Migrations
                 table: "Votes");
 
             migrationBuilder.DropIndex(
-                name: "IX_Votes_CommentId",
+                name: "IX_Votes_CommentsId",
                 table: "Votes");
 
             migrationBuilder.DropColumn(
-                name: "CommentId",
+                name: "CommentsId",
                 table: "Votes");
 
             migrationBuilder.AlterColumn<int>(

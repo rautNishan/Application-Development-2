@@ -142,6 +142,8 @@ namespace CourseWork.Modules.Votes.Controller
             VoteEntity voteEntity = new VoteEntity()
             {
                 BlogId = blogInfo.id,
+                CommentsId = null,
+                Comment = null,
                 IsUpVote = true,
                 Blog = blogInfo,
                 VoteUser = new UserInfo { UserId = int.Parse(adminInfo.UserId), Name = adminInfo.Name },
@@ -351,7 +353,7 @@ namespace CourseWork.Modules.Votes.Controller
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
             {
-                CommentId = commentInfo.id,
+                CommentsId = commentInfo.id,
                 IsUpVote = true,
                 Comment = commentInfo,
                 VoteUser = new UserInfo { UserId = int.Parse(adminInfo.UserId), Name = adminInfo.Name },
@@ -433,7 +435,7 @@ namespace CourseWork.Modules.Votes.Controller
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
             {
-                CommentId = commentInfo.id,
+                CommentsId = commentInfo.id,
                 IsUpVote = false,
                 Comment = commentInfo,
                 VoteUser = new UserInfo { UserId = int.Parse(adminInfo.UserId), Name = adminInfo.Name },

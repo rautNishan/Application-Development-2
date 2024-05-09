@@ -29,7 +29,6 @@ namespace CourseWork.Modules.Comments.Entity
         [ForeignKey("ParentCommentId")]
         public CommentsEntity? ParentComment { get; set; }
 
-
-          public ICollection<VoteEntity> Votes { get; set; } = new List<VoteEntity>();
+        public ICollection<VoteEntity> Votes { get; set; } = new List<VoteEntity>();
     }
 }

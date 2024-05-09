@@ -195,7 +195,7 @@ namespace CourseWork.Migrations
                     b.Property<int?>("BlogId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CommentId")
+                    b.Property<int?>("CommentsId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -214,7 +214,7 @@ namespace CourseWork.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("CommentsId");
 
                     b.ToTable("Votes");
                 });
@@ -270,9 +270,7 @@ namespace CourseWork.Migrations
 
                     b.HasOne("CourseWork.Modules.Comments.Entity.CommentsEntity", "Comment")
                         .WithMany("Votes")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CommentsId");
 
                     b.OwnsOne("CourseWork.Modules.Blogs.Entity.UserInfo", "VoteUser", b1 =>
                         {

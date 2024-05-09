@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseWork.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    [Migration("20240509070955_UpdateComment-Votes")]
-    partial class UpdateCommentVotes
+    [Migration("20240509075836_Vote-Comment-Added")]
+    partial class VoteCommentAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -198,7 +198,7 @@ namespace CourseWork.Migrations
                     b.Property<int?>("BlogId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CommentId")
+                    b.Property<int?>("CommentsId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -217,7 +217,7 @@ namespace CourseWork.Migrations
 
                     b.HasIndex("BlogId");
 
-                    b.HasIndex("CommentId");
+                    b.HasIndex("CommentsId");
 
                     b.ToTable("Votes");
                 });
@@ -273,9 +273,7 @@ namespace CourseWork.Migrations
 
                     b.HasOne("CourseWork.Modules.Comments.Entity.CommentsEntity", "Comment")
                         .WithMany("Votes")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CommentsId");
 
                     b.OwnsOne("CourseWork.Modules.Blogs.Entity.UserInfo", "VoteUser", b1 =>
                         {

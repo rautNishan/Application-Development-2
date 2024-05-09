@@ -14,8 +14,9 @@ namespace CourseWork.Modules.Votes.Entity
         public BlogEntity? Blog { get; set; }
         public UserInfo VoteUser { get; set; }
 
-        public int CommentId { get; set; }
-        [ForeignKey("CommentId")]
+        public int? CommentsId { get; set; }
+
+        [ForeignKey("CommentsId")]
         public CommentsEntity? Comment { get; set; }
         public bool IsUpVote { get; set; }
     }
