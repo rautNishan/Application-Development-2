@@ -4,6 +4,8 @@ using CourseWork.Common.Exceptions;
 using CourseWork.Common.Middlewares.Auth;
 using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.Blogs.Services;
+using CourseWork.Modules.Comments.Entity;
+using CourseWork.Modules.Comments.Services;
 using CourseWork.Modules.User.Entity;
 using CourseWork.Modules.User.Services;
 using CourseWork.Modules.Votes.Dtos;
@@ -20,16 +22,17 @@ namespace CourseWork.Modules.Votes.Controller
     {
         private readonly VoteService _voteService;
         private readonly UserService _userService;
-
+        private readonly CommentsService _commentsService;
         private readonly BlogService _blogService;
 
         private readonly ILogger<UserVoteController> _logger;
 
-        public UserVoteController(UserService userService, BlogService blogService, VoteService voteService, ILogger<UserVoteController> logger)
+        public UserVoteController(UserService userService, BlogService blogService, VoteService voteService, ILogger<UserVoteController> logger, CommentsService commentsService)
         {
             _userService = userService;
             _blogService = blogService;
             _voteService = voteService;
+            _commentsService = commentsService;
             _logger = logger;
         }
         [HttpPost("info/{blogId}")]
@@ -238,6 +241,133 @@ namespace CourseWork.Modules.Votes.Controller
             await _blogService.UpdateFormOtherService(blogInfo);
             HttpContext.Items["CustomMessage"] = "DownVote Successfully";
             VoteResponseDto responseData = new VoteResponseDto { Id = blogInfo.id };
+            return responseData;
+        }
+
+
+        [HttpPost("info-comment/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<GetVoteResponseDto?> GetInfoAboutCommentVotes(string commentId)
+        {
+            //First Get User Info
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+            var userInfo = new CommonUserDto()
+            {
+                UserId = user.id.ToString(),
+                Name = user.UserName
+            };
+
+            //Get Blog Info
+            CommentsEntity? commentInfo = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (commentInfo == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Blog not found");
+            }
+
+            //Check if the user has already voted
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndComment(commentInfo.id, int.Parse(userInfo.UserId));
+            // if (existingVote != null)
+            // {
+            //     throw new HttpException(HttpStatusCode.BadRequest, "You have already voted");
+            // }
+            GetVoteResponseDto returnData = new GetVoteResponseDto()
+            {
+                Id = existingVote?.id ?? null,
+                IsUpVote = existingVote?.IsUpVote ?? null
+            };
+            return returnData;
+        }
+
+        [HttpPost("upvote-comment/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<VoteResponseDto> CommentUpVote(string commentId)
+        {
+
+
+            //First Get User Info
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+            }
+            var userInfo = new CommonUserDto()
+            {
+                UserId = user.id.ToString(),
+                Name = user.UserName
+            };
+
+            //Get Blog Info
+            CommentsEntity? commentInfo = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (commentInfo == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Blog not found");
+            }
+
+            //Check if the user has already voted
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndComment(commentInfo.id, int.Parse(userInfo.UserId));
+
+            _logger.LogInformation("Existing Vote" + existingVote);
+
+            if (existingVote != null) //If the user has already voted
+            {
+                if (existingVote.IsUpVote == true)
+                {
+                    //If user has already upvote don't give again
+                    throw new HttpException(HttpStatusCode.BadRequest, "You have already down voted");
+                }
+
+                if (existingVote.IsUpVote == false)
+                {
+                    //Initial was upVote now change and it to downvote
+                    commentInfo.UpVote += 1;
+                    commentInfo.DownVote -= 1;
+                    await _commentsService.UpdateCommentsByOtherService(commentInfo);
+                    existingVote.IsUpVote = true;
+                    await _voteService.UpdateVote(existingVote);
+                    HttpContext.Items["CustomMessage"] = "Upvote Successfully";
+                    return new VoteResponseDto { Id = commentInfo.id };
+                }
+            }
+
+            //If the user has not voted before
+            commentInfo.UpVote += 1;
+
+
+
+            //Create Vote
+            VoteEntity voteEntity = new VoteEntity()
+            {
+                CommentId = commentInfo.id,
+                IsUpVote = true,
+                Comment = commentInfo,
+                VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
+
+            };
+
+            VoteEntity createdVote = await _voteService.CreateVote(voteEntity);
+
+            if (createdVote == null)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "Vote not created");
+            }
+            _logger.LogInformation("Vote Created" + createdVote);
+            //Updating the Blog
+            commentInfo.Votes.Add(createdVote);
+            await _commentsService.UpdateCommentsByOtherService(commentInfo);
+            HttpContext.Items["CustomMessage"] = "Upvote Successfully";
+            VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
             return responseData;
         }
     }
