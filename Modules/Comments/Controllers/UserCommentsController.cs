@@ -15,7 +15,7 @@ namespace CourseWork.Modules.Comments.Controllers
 {
     [ApiExplorerSettings(GroupName = "user")]
     [Tags("Comments")]
-    [Route("api/user/blogs")]
+    [Route("api/user/comments")]
     public class UserCommentsController : ControllerBase
     {
         private readonly CommentsService _commentsService;

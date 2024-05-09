@@ -33,5 +33,10 @@ namespace CourseWork.Modules.Votes.Service
         {
             return await _voteRepo.UpdateAsync(voteEntity);
         }
+
+         public async Task<VoteEntity?> FindVoteByUserAndComment(int commentId, int userId)
+        {
+            return await _voteRepo.FindOne(entity => entity.CommentId == commentId && entity.VoteUser.UserId == userId);
+        }
     }
 }

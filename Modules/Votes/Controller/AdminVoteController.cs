@@ -6,6 +6,8 @@ using CourseWork.Modules.Admin.Entity;
 using CourseWork.Modules.Admin.Services;
 using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.Blogs.Services;
+using CourseWork.Modules.Comments.Entity;
+using CourseWork.Modules.Comments.Services;
 using CourseWork.Modules.Votes.Dtos;
 using CourseWork.Modules.Votes.Entity;
 using CourseWork.Modules.Votes.Service;
@@ -22,19 +24,22 @@ namespace CourseWork.Modules.Votes.Controller
         private readonly AdminService _adminService;
 
         private readonly BlogService _blogService;
+
+        private readonly CommentsService _commentsService;
         private readonly ILogger<AdminVoteController> _logger;
 
-        public AdminVoteController(AdminService adminService, BlogService blogService, VoteService voteService, ILogger<AdminVoteController> logger)
+        public AdminVoteController(AdminService adminService, BlogService blogService, VoteService voteService, ILogger<AdminVoteController> logger, CommentsService commentsService)
         {
             _adminService = adminService;
             _blogService = blogService;
             _voteService = voteService;
+            _commentsService = commentsService;
             _logger = logger;
         }
 
-        [HttpPost("info/{blogId}")]
+        [HttpPost("info-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<GetVoteResponseDto?> GetInfoAboutVotes(string blogId)
+        public async Task<GetVoteResponseDto?> GetInfoAboutBlogVotes(string blogId)
         {
             //First Get User Info
             string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
@@ -73,9 +78,9 @@ namespace CourseWork.Modules.Votes.Controller
             return returnData;
         }
 
-        [HttpPost("upvote/{blogId}")]
+        [HttpPost("upvote-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<VoteResponseDto> UpVote(string blogId)
+        public async Task<VoteResponseDto> BlogUpVote(string blogId)
         {
 
 
@@ -158,9 +163,9 @@ namespace CourseWork.Modules.Votes.Controller
             return responseData;
         }
 
-        [HttpPost("downvote/{blogId}")]
+        [HttpPost("downvote-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<VoteResponseDto> DownVote(string blogId)
+        public async Task<VoteResponseDto> BlogDownVote(string blogId)
         {
 
 
@@ -241,6 +246,47 @@ namespace CourseWork.Modules.Votes.Controller
             return responseData;
         }
 
+        
+        [HttpPost("info-comment/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<GetVoteResponseDto?> GetInfoAboutCommentVotes(string commentId)
+        {
+            //First Get User Info
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            AdminEntity? adminUser = await _adminService.GetUserByIdAsync(parseUserId);
+
+            if (adminUser == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+            }
+            var adminInfo = new CommonUserDto()
+            {
+                UserId = adminUser.id.ToString(),
+                Name = adminUser.UserName
+            };
+
+            //Get Blog Info
+            CommentsEntity? commentInfo = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (commentInfo == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Blog not found");
+            }
+
+            //Check if the user has already voted
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndComment(commentInfo.id, int.Parse(adminInfo.UserId));
+            // if (existingVote != null)
+            // {
+            //     throw new HttpException(HttpStatusCode.BadRequest, "You have already voted");
+            // }
+            GetVoteResponseDto returnData = new GetVoteResponseDto()
+            {
+                Id = existingVote?.id ?? null,
+                IsUpVote = existingVote?.IsUpVote ?? null
+            };
+            return returnData;
+        }
 
 
     }

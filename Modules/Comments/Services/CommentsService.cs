@@ -60,6 +60,12 @@ namespace CourseWork.Modules.Comments.Services
             return await _commentsRepo.UpdateAsync(commentsEntity);
         }
 
+        public async Task<CommentsEntity> UpdateCommentsByOtherService(CommentsEntity commentsEntity)
+        {
+
+            return await _commentsRepo.UpdateAsync(commentsEntity);
+        }
+
 
         public async Task<CommentsEntity?> GetByIdAsync(int id)
         {
