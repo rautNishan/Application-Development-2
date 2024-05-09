@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CourseWork.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    partial class MyAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240509034027_CommentUpdate")]
+    partial class CommentUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,9 +128,6 @@ namespace CourseWork.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentCommentId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UpVote")
                         .HasColumnType("int");
 
@@ -137,8 +137,6 @@ namespace CourseWork.Migrations
                     b.HasKey("id");
 
                     b.HasIndex("BlogId");
-
-                    b.HasIndex("ParentCommentId");
 
                     b.ToTable("BlogComments");
                 });
@@ -248,13 +246,7 @@ namespace CourseWork.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CourseWork.Modules.Comments.Entity.CommentsEntity", "ParentComment")
-                        .WithMany()
-                        .HasForeignKey("ParentCommentId");
-
                     b.Navigation("BlogEntity");
-
-                    b.Navigation("ParentComment");
                 });
 
             modelBuilder.Entity("CourseWork.Modules.Votes.Entity.VoteEntity", b =>

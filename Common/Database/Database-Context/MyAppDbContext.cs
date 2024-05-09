@@ -1,5 +1,6 @@
 ﻿using CourseWork.Modules.Admin.Entity;
 using CourseWork.Modules.Blogs.Entity;
+using CourseWork.Modules.Comments.Entity;
 using CourseWork.Modules.User.Entity;
 using CourseWork.Modules.Votes.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public class MyAppDbContext : DbContext
     public DbSet<AdminEntity> Admin { get; set; }
     public DbSet<BlogEntity> Blogs { get; set; }
 
-    public DbSet<BlogComment> BlogComments { get; set; }
+    public DbSet<CommentsEntity> BlogComments { get; set; }
     public DbSet<VoteEntity> Votes { get; set; }
 
 

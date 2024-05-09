@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CourseWork.Common.database.Base_Model;
+using CourseWork.Modules.Comments.Entity;
 using CourseWork.Modules.Votes.Entity;
 
 namespace CourseWork.Modules.Blogs.Entity
@@ -16,7 +17,7 @@ namespace CourseWork.Modules.Blogs.Entity
         public int UpVote { get; set; } = 0;
         public int DownVote { get; set; } = 0;
         public ICollection<VoteEntity> Votes { get; set; } = new List<VoteEntity>();
-        public ICollection<BlogComment> Comments { get; set; } = new List<BlogComment>();
+        public ICollection<CommentsEntity> Comments { get; set; } = new List<CommentsEntity>();
 
 
     }
