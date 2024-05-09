@@ -94,7 +94,7 @@ namespace CourseWork.Modules.Blogs.Controller
 
             if (user == null)
             {
-                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
             }
             CommonUserDto userInfo = new CommonUserDto()
             {

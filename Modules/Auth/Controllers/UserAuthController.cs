@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using CourseWork.Common.Exceptions;
+using CourseWork.Common.Helper.EmailService;
+using CourseWork.Common.Middlewares.Auth;
 using CourseWork.Modules.Auth.Dtos;
 using CourseWork.Modules.Auth.Services;
 using CourseWork.Modules.User.Dtos;
@@ -17,12 +19,14 @@ namespace CourseWork.Modules.Auth.Controllers
         private readonly AuthService _authService;
         private readonly UserService _userService;
 
+        private readonly EmailService _emailService;
         private readonly ILogger<UserAuthController> _logger;
 
-        public UserAuthController(AuthService authService, UserService userService, ILogger<UserAuthController> logger)
+        public UserAuthController(AuthService authService, UserService userService, ILogger<UserAuthController> logger, EmailService emailService)
         {
             _authService = authService;
             _userService = userService;
+            _emailService = emailService;
             _logger = logger;
         }
 
@@ -64,6 +68,8 @@ namespace CourseWork.Modules.Auth.Controllers
             }
         }
 
+
+
         [HttpGet("verify-email/{email}")]
         public async Task<IActionResult> VerifyEmail(string email)
         {
@@ -85,5 +91,54 @@ namespace CourseWork.Modules.Auth.Controllers
             return Redirect("http://localhost:3000/login");
         }
 
+
+        [HttpGet("verify-password-change/{email}")]
+        async public Task<IActionResult> ChangePassword(string email)
+        {
+            //Decode Email
+            email = WebUtility.UrlDecode(email);
+            //From Email check that email
+            UserEntity? existingUser = await _userService.FindOneByEmail(email);
+            if (existingUser == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not Found");
+            }
+            HttpContext.Items["CustomMessage"] = "Change You Password";
+            //Redirect user to login page in frontend
+            return Redirect("http://localhost:3000/reset-password");
+        }
+
+        [HttpPost("change-password")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<UserResponseDto> ChangePassword([FromBody] ChangePasswordDto incomingData)
+        {
+            try
+            {
+
+                string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+                int parseUserId = int.Parse(userId); // Convert the string to an int
+                UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+                if (user == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                }
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(incomingData.OldPassword);
+                bool isPasswordCorrect = _authService.checkPassword(user, hashedPassword);
+                if (!isPasswordCorrect)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "Old Password is not correct");
+                }
+                UserEntity updatedUser = await _userService.ChangePassword(user, incomingData);
+                UserResponseDto dataToResponse = new UserResponseDto() { Id = updatedUser.id };
+                HttpContext.Items["CustomMessage"] = "Password Changed Successfully";
+                return dataToResponse;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
