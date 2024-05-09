@@ -74,9 +74,9 @@ namespace CourseWork.Modules.Blogs.Controller
 
         [HttpGet("info/{blog}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<BlogEntity> GetBlogById(string blog)
+        public async Task<GetBlogByIdResponseDto> GetBlogById(string blog)
         {
-            BlogEntity? existingBlog = await _blogService.GetByIdAsync(int.Parse(blog));
+            GetBlogByIdResponseDto? existingBlog = await _blogService.GetBlogWithCommentsAsync(int.Parse(blog));
             if (existingBlog == null)
             {
                 throw new HttpException(HttpStatusCode.NotFound, "Blog with that id was not found");
@@ -133,7 +133,7 @@ namespace CourseWork.Modules.Blogs.Controller
             return await _blogService.RestoreBlog(int.Parse(blog));
         }
 
-        
+
         [HttpDelete("hard-delete/{blog}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<BlogEntity> HardDelete(string blog)

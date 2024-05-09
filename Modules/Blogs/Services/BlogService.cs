@@ -77,6 +77,10 @@ namespace CourseWork.Modules.Blogs.Services
 
         }
 
+        public async Task<GetBlogByIdResponseDto?> GetBlogWithCommentsAsync(int blogId)
+        {
+            return await _blogRepo.GetBlogWithCommentsAsync(blogId);
+        }
         public async Task<PaginatedResponse<BlogEntity>> GetPaginatedBlogList(int pageNumber, ShortByEnum shortBy)
         {
             PaginatedResponse<BlogEntity> results = await _blogRepo.GetAllPaginatedAsync(pageNumber, shortBy);
