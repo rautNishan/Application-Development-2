@@ -140,5 +140,31 @@ namespace CourseWork.Modules.Blogs.Controller
             return await _blogService.HardDelete(int.Parse(blog));
         }
 
+        //Get self blog
+        [HttpGet("personal-blogs")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<IActionResult> GetPersonalBlogs()
+        {
+            try
+            {
+                string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+                int parseUserId = int.Parse(userId); // Convert the string to an int
+                UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+                if (user == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "User not found");
+                }
+
+                var result = await _blogService.GetPersonalBlogs(user);
+                HttpContext.Items["CustomMessage"] = "Blog List Successfully";
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

@@ -168,5 +168,11 @@ namespace CourseWork.Modules.Blogs.Services
                 .Take(10)
                 .Select(u => u.User);
         }
+
+        public async Task<IEnumerable<BlogEntity>> GetPersonalBlogs(UserEntity user)
+        {
+            IEnumerable<BlogEntity> blogs = await _blogRepo.GetAllAsync();
+            return blogs.Where(b => b.PostUser.UserId == user.id);
+        }
     }
 }

@@ -9,6 +9,7 @@ using CourseWork.Modules.Blogs.Repository;
 using CourseWork.Modules.Blogs.Services;
 using CourseWork.Modules.Comments.Repository;
 using CourseWork.Modules.Comments.Services;
+using CourseWork.Modules.Notification;
 using CourseWork.Modules.user.repository;
 using CourseWork.Modules.User.Services;
 using CourseWork.Modules.Votes.Repository;
@@ -79,6 +80,9 @@ builder.Services.AddSwaggerGen(c => //swaggerGen method takes a configuration ac
 });
 
 
+// Add services to the container.
+builder.Services.AddSignalR();
+
 // Users Injectable
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
@@ -148,6 +152,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//Notification
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllers();
 

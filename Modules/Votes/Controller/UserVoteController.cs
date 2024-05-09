@@ -6,12 +6,14 @@ using CourseWork.Modules.Blogs.Entity;
 using CourseWork.Modules.Blogs.Services;
 using CourseWork.Modules.Comments.Entity;
 using CourseWork.Modules.Comments.Services;
+using CourseWork.Modules.Notification;
 using CourseWork.Modules.User.Entity;
 using CourseWork.Modules.User.Services;
 using CourseWork.Modules.Votes.Dtos;
 using CourseWork.Modules.Votes.Entity;
 using CourseWork.Modules.Votes.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CourseWork.Modules.Votes.Controller
 {
@@ -21,17 +23,19 @@ namespace CourseWork.Modules.Votes.Controller
     public class UserVoteController : ControllerBase
     {
         private readonly VoteService _voteService;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly UserService _userService;
         private readonly CommentsService _commentsService;
         private readonly BlogService _blogService;
 
         private readonly ILogger<UserVoteController> _logger;
 
-        public UserVoteController(UserService userService, BlogService blogService, VoteService voteService, ILogger<UserVoteController> logger, CommentsService commentsService)
+        public UserVoteController(UserService userService, BlogService blogService, VoteService voteService, ILogger<UserVoteController> logger, CommentsService commentsService, IHubContext<NotificationHub> hubContext)
         {
             _userService = userService;
             _blogService = blogService;
             _voteService = voteService;
+            _hubContext = hubContext;
             _commentsService = commentsService;
             _logger = logger;
         }
@@ -127,6 +131,8 @@ namespace CourseWork.Modules.Votes.Controller
                     existingVote.IsUpVote = true;
                     await _voteService.UpdateVote(existingVote);
                     HttpContext.Items["CustomMessage"] = "Upvote Successfully";
+                    var notificationMessage = "Your blog post received a new upvote!";
+                    await _hubContext.Clients.User(user.id.ToString()).SendAsync("ReceiveNotification", notificationMessage);
                     return new VoteResponseDto { Id = blogInfo.id };
                 }
             }
