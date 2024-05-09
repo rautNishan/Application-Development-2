@@ -44,33 +44,6 @@ namespace CourseWork.Modules.Admin.Controllers
             }
         }
 
-        [HttpGet("info/{adminId}")]
-        [ServiceFilter(typeof(RoleAuthFilter))]
-
-        public async Task<AdminGetByIdResponseDto> GetAdminById(string adminId)
-        {
-            try
-            {
-                AdminEntity? result = await _adminService.GetUserByIdAsync(int.Parse(adminId));
-                if (result == null)
-                {
-                    throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
-                }
-
-                HttpContext.Items["CustomMessage"] = "Admin Created Successfully";
-                AdminGetByIdResponseDto dataToSend = new AdminGetByIdResponseDto
-                {
-                    Id = result.id,
-                    UserName = result.UserName
-                };
-                return dataToSend;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         [HttpGet("list")]
         [ServiceFilter(typeof(RoleAuthFilter))]
 
@@ -79,7 +52,7 @@ namespace CourseWork.Modules.Admin.Controllers
             try
             {
                 int parsePage = int.Parse(page);
-                PaginatedResponse<AdminEntity> result = await _adminService.GetPaginatedBlogList(parsePage, shortBy);
+                PaginatedResponse<AdminEntity> result = await _adminService.GetPaginatedAdminList(parsePage, shortBy);
                 PaginatedResponse<AdminPaginatedResponse> mappedResults = new PaginatedResponse<AdminPaginatedResponse>
                 {
                     PageNumber = result.PageNumber,
@@ -99,6 +72,35 @@ namespace CourseWork.Modules.Admin.Controllers
                 throw;
             }
         }
+
+        [HttpGet("info/{adminId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+
+        public async Task<AdminGetByIdResponseDto> GetAdminById(string adminId)
+        {
+            try
+            {
+                AdminEntity? result = await _adminService.GetUserByIdAsync(int.Parse(adminId));
+                if (result == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                }
+
+                HttpContext.Items["CustomMessage"] = "Admin Get Successfully";
+                AdminGetByIdResponseDto dataToSend = new AdminGetByIdResponseDto
+                {
+                    Id = result.id,
+                    UserName = result.UserName
+                };
+                return dataToSend;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
 
         [HttpPost("update/{adminId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
@@ -132,10 +134,10 @@ namespace CourseWork.Modules.Admin.Controllers
 
         [HttpDelete("soft-delete/{adminId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<AdminCreateResponseDto> SoftDeleteBlog(string adminId)
+        public async Task<AdminCreateResponseDto> SoftDeleteAdmin(string adminId)
         {
 
-            AdminEntity result = await _adminService.SoftDeleteBlog(int.Parse(adminId));
+            AdminEntity result = await _adminService.SoftDeleteAdmin(int.Parse(adminId));
             return new AdminCreateResponseDto
             {
                 Id = result.id
@@ -145,10 +147,10 @@ namespace CourseWork.Modules.Admin.Controllers
 
         [HttpPost("restore/{adminId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<AdminCreateResponseDto> RestoreBlog(string adminId)
+        public async Task<AdminCreateResponseDto> RestoreAdmin(string adminId)
         {
 
-            AdminEntity result = await _adminService.RestoreBlog(int.Parse(adminId));
+            AdminEntity result = await _adminService.RestoreAdmin(int.Parse(adminId));
             return new AdminCreateResponseDto
             {
                 Id = result.id

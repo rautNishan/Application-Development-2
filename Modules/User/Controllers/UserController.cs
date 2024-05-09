@@ -45,6 +45,76 @@ namespace CourseWork.Modules.User.Controller
             }
         }
 
+
+
+        [HttpGet("info/{userId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+
+        public async Task<UserResponseGetById> GetUserById(string userId)
+        {
+            try
+            {
+                UserEntity? result = await _userService.GetUserByIdAsync(int.Parse(userId));
+                if (result == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                }
+
+                HttpContext.Items["CustomMessage"] = "User Get Successfully";
+                UserResponseGetById dataToSend = new UserResponseGetById
+                {
+                    Id = result.id,
+                    UserName = result.UserName
+                };
+                return dataToSend;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpDelete("soft-delete/{userId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<UserResponseGetById> SoftDeleteUser(string userId)
+        {
+
+            UserEntity result = await _userService.SoftDeleteUser(int.Parse(userId));
+            return new UserResponseGetById
+            {
+                Id = result.id,
+                UserName = result.UserName
+            };
+
+        }
+
+        [HttpPost("restore/{userId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<UserResponseGetById> RestoreUser(string userId)
+        {
+
+            UserEntity result = await _userService.RestoreUser(int.Parse(userId));
+            return new UserResponseGetById
+            {
+                Id = result.id,
+                UserName = result.UserName
+            };
+        }
+
+        [HttpDelete("hard-delete/{userId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<UserResponseGetById> HardDelete(string userId)
+        {
+
+            UserEntity result = await _userService.HardDelete(int.Parse(userId));
+            return new UserResponseGetById
+            {
+                Id = result.id,
+                UserName = result.UserName
+            };
+        }
+
+
         [HttpPost("forget-password")]
         // [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgotPasswordDto incomingData)

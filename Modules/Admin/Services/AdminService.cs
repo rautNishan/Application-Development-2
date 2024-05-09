@@ -65,7 +65,7 @@ namespace CourseWork.Modules.Admin.Services
             return await _adminRepo.CreateAsync(adminEntity);
         }
 
-        public async Task<PaginatedResponse<AdminEntity>> GetPaginatedBlogList(int pageNumber, ShortByEnum shortBy)
+        public async Task<PaginatedResponse<AdminEntity>> GetPaginatedAdminList(int pageNumber, ShortByEnum shortBy)
         {
             PaginatedResponse<AdminEntity> results = await _adminRepo.GetAllPaginatedAsync(pageNumber, shortBy);
             return results;
@@ -80,7 +80,7 @@ namespace CourseWork.Modules.Admin.Services
             return await _adminRepo.UpdateAsync(adminEntity);
         }
 
-        public async Task<AdminEntity> SoftDeleteBlog(int id)
+        public async Task<AdminEntity> SoftDeleteAdmin(int id)
         {
             AdminEntity? existingAdmin = await _adminRepo.FindByIdAsync(id);
             if (existingAdmin == null)
@@ -91,7 +91,7 @@ namespace CourseWork.Modules.Admin.Services
             return await _adminRepo.SoftDeleteAsync(existingAdmin);
         }
 
-        public async Task<AdminEntity> RestoreBlog(int id)
+        public async Task<AdminEntity> RestoreAdmin(int id)
         {
             AdminEntity? existingAdmin = await _adminRepo.FindByIdIncludingDeletedAsync(id);
             if (existingAdmin == null)
