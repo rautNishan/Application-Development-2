@@ -166,7 +166,7 @@ namespace CourseWork.Modules.Comments.Controllers
 
         }
 
-        [HttpGet("comment/{comment}")]
+        [HttpGet("info-comment/{comment}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
 
         public async Task<CommentsGetResponseDto> GetCommentsById(string comment)
@@ -177,6 +177,126 @@ namespace CourseWork.Modules.Comments.Controllers
                 throw new HttpException(HttpStatusCode.NotFound, "Comment with that id was not found");
             }
             return commentDto;
+        }
+
+        [HttpDelete("soft-delete/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<CommonCommentResponseDto> SoftDeleteComment(string commentId)
+        {
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+
+            CommentsEntity? existingComment = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Comment not found");
+            }
+
+
+
+            if (existingComment.CommentedUserId != user.id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "Sorry Cannot Delete Others Comment");
+            }
+
+            CommentsEntity result = await _commentsService.SoftDeleteComment(int.Parse(commentId));
+            CommonCommentResponseDto dataToResponse = new CommonCommentResponseDto()
+            {
+                Id = result.id,
+                BlogId = result.BlogId,
+                CommentedUserName = result.CommentedUserName,
+                Message = result.Message,
+
+            };
+
+            HttpContext.Items["CustomMessage"] = "Comment Deleted Successfully";
+            return dataToResponse;
+        }
+
+
+        [HttpPost("restore/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<CommonCommentResponseDto> RestoreComment(string commentId)
+        {
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+
+            CommentsEntity? existingComment = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Comment not found");
+            }
+
+            if (existingComment.CommentedUserId != user.id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "Sorry Cannot Restore Others Comment");
+            }
+
+            CommentsEntity result = await _commentsService.RestoreComment(int.Parse(commentId));
+            CommonCommentResponseDto dataToResponse = new CommonCommentResponseDto()
+            {
+                Id = result.id,
+                BlogId = result.BlogId,
+                CommentedUserName = result.CommentedUserName,
+                Message = result.Message,
+
+            };
+
+            HttpContext.Items["CustomMessage"] = "Comment Restored Successfully";
+            return dataToResponse;
+        }
+
+        [HttpDelete("hard-delete/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<CommonCommentResponseDto> HardDelete(string commentId)
+        {
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User not found");
+            }
+
+            CommentsEntity? existingComment = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Comment not found");
+            }
+
+            if (existingComment.CommentedUserId != user.id)
+            {
+                throw new HttpException(HttpStatusCode.Forbidden, "Sorry Cannot Delete Others Comment");
+            }
+
+            CommentsEntity result = await _commentsService.HardDelete(int.Parse(commentId));
+            CommonCommentResponseDto dataToResponse = new CommonCommentResponseDto()
+            {
+                Id = result.id,
+                BlogId = result.BlogId,
+                CommentedUserName = result.CommentedUserName,
+                Message = result.Message,
+
+            };
+
+            HttpContext.Items["CustomMessage"] = "Comment Deleted Successfully";
+            return dataToResponse;
         }
     }
 }

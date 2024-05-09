@@ -96,5 +96,37 @@ namespace CourseWork.Modules.Comments.Services
 
             return result;
         }
+
+        public async Task<CommentsEntity> SoftDeleteComment(int id)
+        {
+            CommentsEntity? existingComment = await _commentsRepo.FindByIdAsync(id);
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Comment with that id was not found");
+            }
+            existingComment.DeletedAt = DateTime.Now;
+            return await _commentsRepo.SoftDeleteAsync(existingComment);
+        }
+
+        public async Task<CommentsEntity> RestoreComment(int id)
+        {
+            CommentsEntity? existingComment = await _commentsRepo.FindByIdIncludingDeletedAsync(id);
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Comment with that id was not found");
+            }
+            existingComment.DeletedAt = null;
+            return await _commentsRepo.UpdateAsync(existingComment);
+        }
+
+        public async Task<CommentsEntity> HardDelete(int id)
+        {
+            CommentsEntity? existingComment = await _commentsRepo.FindByIdIncludingDeletedAsync(id);
+            if (existingComment == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "User with that id was not found");
+            }
+            return await _commentsRepo.DeleteAsync(existingComment);
+        }
     }
 }
