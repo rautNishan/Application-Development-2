@@ -118,5 +118,27 @@ namespace CourseWork.Modules.Blogs.Services
             }
             return await _blogRepo.DeleteAsync(existingBlog);
         }
+
+
+        //Find all Blog without pagination
+        public async Task<IEnumerable<BlogEntity>> GetTopTenBlogs(int? year, int? month)
+        {
+            IEnumerable<BlogEntity> blogs = await _blogRepo.GetAllAsync();
+            int upVoteWeightage = 2;
+            int downVoteWeightage = -1;
+            int commentWeightage = 1;
+
+            if (year.HasValue && month.HasValue)
+            {
+                blogs = blogs.Where(b => b.CreatedAt.Year == year.Value && b.CreatedAt.Month == month.Value);
+            }
+
+            return blogs
+                .OrderByDescending(b =>
+                    upVoteWeightage * b.UpVote +
+                    downVoteWeightage * b.DownVote +
+                    commentWeightage * b.Comments.Count)
+                .Take(10);
+        }
     }
 }
