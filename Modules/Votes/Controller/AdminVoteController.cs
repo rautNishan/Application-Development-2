@@ -435,6 +435,8 @@ namespace CourseWork.Modules.Votes.Controller
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
             {
+                Blog=null,
+                BlogId=null,
                 CommentsId = commentInfo.id,
                 IsUpVote = false,
                 Comment = commentInfo,

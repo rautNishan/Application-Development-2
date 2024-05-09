@@ -51,7 +51,7 @@ namespace CourseWork.Modules.Votes.Controller
             var userInfo = new CommonUserDto()
             {
                 UserId = user.id.ToString(),
-                Name = user.UserName
+                Name = user.Name
             };
 
             //Get Blog Info
@@ -94,7 +94,7 @@ namespace CourseWork.Modules.Votes.Controller
             var userInfo = new CommonUserDto()
             {
                 UserId = user.id.ToString(),
-                Name = user.UserName
+                Name = user.Name
             };
 
             //Get Blog Info
@@ -142,6 +142,8 @@ namespace CourseWork.Modules.Votes.Controller
                 BlogId = blogInfo.id,
                 IsUpVote = true,
                 Blog = blogInfo,
+                Comment = null,
+                CommentsId = null,
                 VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
 
             };
@@ -179,7 +181,7 @@ namespace CourseWork.Modules.Votes.Controller
             var userInfo = new CommonUserDto()
             {
                 UserId = user.id.ToString(),
-                Name = user.UserName
+                Name = user.Name
             };
 
             //Get Blog Info
@@ -223,6 +225,8 @@ namespace CourseWork.Modules.Votes.Controller
             {
                 BlogId = blogInfo.id,
                 IsUpVote = false,
+                Comment = null,
+                CommentsId = null,
                 Blog = blogInfo,
                 VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
 
@@ -261,7 +265,7 @@ namespace CourseWork.Modules.Votes.Controller
             var userInfo = new CommonUserDto()
             {
                 UserId = user.id.ToString(),
-                Name = user.UserName
+                Name = user.Name
             };
 
             //Get Blog Info
@@ -304,7 +308,7 @@ namespace CourseWork.Modules.Votes.Controller
             var userInfo = new CommonUserDto()
             {
                 UserId = user.id.ToString(),
-                Name = user.UserName
+                Name = user.Name
             };
 
             //Get Blog Info
@@ -352,6 +356,8 @@ namespace CourseWork.Modules.Votes.Controller
                 CommentsId = commentInfo.id,
                 IsUpVote = true,
                 Comment = commentInfo,
+                Blog = null,
+                BlogId = null,
                 VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
 
             };
@@ -367,6 +373,91 @@ namespace CourseWork.Modules.Votes.Controller
             commentInfo.Votes.Add(createdVote);
             await _commentsService.UpdateCommentsByOtherService(commentInfo);
             HttpContext.Items["CustomMessage"] = "Upvote Successfully";
+            VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
+            return responseData;
+        }
+
+        [HttpPost("downvote-comment/{commentId}")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<VoteResponseDto> CommentDownVote(string commentId)
+        {
+
+
+            //First Get User Info
+            string userId = (HttpContext.Items["UserId"] as string)!; //Since we are using the RoleAuthFilter, we can safely assume that the UserId is a string and never null
+            int parseUserId = int.Parse(userId); // Convert the string to an int
+            UserEntity? user = await _userService.GetUserByIdAsync(parseUserId);
+
+            if (user == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+            }
+            var userInfo = new CommonUserDto()
+            {
+                UserId = user.id.ToString(),
+                Name = user.Name
+            };
+
+            //Get Blog Info
+            CommentsEntity? commentInfo = await _commentsService.GetByIdAsync(int.Parse(commentId));
+
+            if (commentInfo == null)
+            {
+                throw new HttpException(HttpStatusCode.NotFound, "Blog not found");
+            }
+
+            //Check if the user has already voted
+            VoteEntity? existingVote = await _voteService.FindVoteByUserAndComment(commentInfo.id, int.Parse(userInfo.UserId));
+            _logger.LogInformation("Existing Vote" + existingVote);
+            //Trying to downvote 
+            //If it is the user has already up vote now change it to down vote
+            if (existingVote != null)
+            {
+                if (existingVote.IsUpVote == false)
+                {
+                    throw new HttpException(HttpStatusCode.BadRequest, "You have already down voted");
+                }
+
+                if (existingVote.IsUpVote == true)
+                {
+                    //Initial was upVote now change and it to downvote
+                    commentInfo.UpVote -= 1;
+                    commentInfo.DownVote += 1;
+                    await _commentsService.UpdateCommentsByOtherService(commentInfo);
+                    existingVote.IsUpVote = false;
+                    await _voteService.UpdateVote(existingVote);
+                    HttpContext.Items["CustomMessage"] = "DownVote Successfully";
+                    return new VoteResponseDto { Id = commentInfo.id };
+
+                }
+            }
+
+            //If the user has not voted before
+            commentInfo.DownVote += 1;
+            //Create Vote
+            VoteEntity voteEntity = new VoteEntity()
+            {
+                CommentsId = commentInfo.id,
+                IsUpVote = false,
+                Blog = null,
+                BlogId = null,
+                Comment = commentInfo,
+                VoteUser = new UserInfo { UserId = int.Parse(userInfo.UserId), Name = userInfo.Name },
+
+            };
+
+            VoteEntity createdVote = await _voteService.CreateVote(voteEntity);
+
+            if (createdVote == null)
+            {
+                throw new HttpException(HttpStatusCode.BadRequest, "Vote not created");
+            }
+            _logger.LogInformation("Vote Created" + createdVote);
+            //Updating the Blog
+
+            commentInfo.Votes.Add(createdVote);
+            await _commentsService.UpdateCommentsByOtherService(commentInfo);
+            HttpContext.Items["CustomMessage"] = "DownVote Successfully";
             VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
             return responseData;
         }
