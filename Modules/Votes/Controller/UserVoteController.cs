@@ -35,7 +35,7 @@ namespace CourseWork.Modules.Votes.Controller
             _commentsService = commentsService;
             _logger = logger;
         }
-        [HttpPost("info/{blogId}")]
+        [HttpGet("info-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetVoteResponseDto?> GetInfoAboutVotes(string blogId)
         {
@@ -76,7 +76,7 @@ namespace CourseWork.Modules.Votes.Controller
             return returnData;
         }
 
-        [HttpPost("upvote/{blogId}")]
+        [HttpPost("upvote-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<VoteResponseDto> UpVote(string blogId)
         {
@@ -163,7 +163,7 @@ namespace CourseWork.Modules.Votes.Controller
             return responseData;
         }
 
-        [HttpPost("downvote/{blogId}")]
+        [HttpPost("downvote-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<VoteResponseDto> DownVote(string blogId)
         {
@@ -249,7 +249,7 @@ namespace CourseWork.Modules.Votes.Controller
         }
 
 
-        [HttpPost("info-comment/{commentId}")]
+        [HttpGet("info-comment/{commentId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetVoteResponseDto?> GetInfoAboutCommentVotes(string commentId)
         {

@@ -123,8 +123,8 @@ namespace CourseWork.Modules.Auth.Controllers
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
                 }
-                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(incomingData.OldPassword);
-                bool isPasswordCorrect = _authService.checkPassword(user, hashedPassword);
+
+                bool isPasswordCorrect = _authService.checkPassword(user, incomingData.OldPassword);
                 if (!isPasswordCorrect)
                 {
                     throw new HttpException(HttpStatusCode.BadRequest, "Old Password is not correct");

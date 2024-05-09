@@ -37,7 +37,7 @@ namespace CourseWork.Modules.Votes.Controller
             _logger = logger;
         }
 
-        [HttpPost("info-blog/{blogId}")]
+        [HttpGet("info-blog/{blogId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetVoteResponseDto?> GetInfoAboutBlogVotes(string blogId)
         {
@@ -249,7 +249,7 @@ namespace CourseWork.Modules.Votes.Controller
         }
 
 
-        [HttpPost("info-comment/{commentId}")]
+        [HttpGet("info-comment/{commentId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetVoteResponseDto?> GetInfoAboutCommentVotes(string commentId)
         {
