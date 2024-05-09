@@ -128,5 +128,11 @@ namespace CourseWork.Modules.Comments.Services
             }
             return await _commentsRepo.DeleteAsync(existingComment);
         }
+
+        //Retun Total Number of Comments 
+        public async Task<int> GetTotalComments()
+        {
+            return await _commentsRepo.GetTotalCount();
+        }
     }
 }

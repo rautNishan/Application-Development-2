@@ -435,8 +435,8 @@ namespace CourseWork.Modules.Votes.Controller
             //Create Vote
             VoteEntity voteEntity = new VoteEntity()
             {
-                Blog=null,
-                BlogId=null,
+                Blog = null,
+                BlogId = null,
                 CommentsId = commentInfo.id,
                 IsUpVote = false,
                 Comment = commentInfo,
@@ -458,6 +458,15 @@ namespace CourseWork.Modules.Votes.Controller
             HttpContext.Items["CustomMessage"] = "DownVote Successfully";
             VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
             return responseData;
+        }
+
+        //Returns Total Votes, including total upvotes and downvotes
+        [HttpGet("total-votes")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<TotalVotesResponseDto> GetTotalVotes()
+        {
+            TotalVotesResponseDto result = await _voteService.GetTotalVotes();
+            return new TotalVotesResponseDto { TotalVotes = result.TotalVotes, TotalUpVotes = result.TotalUpVotes, TotalDownVotes = result.TotalDownVotes };
         }
 
     }

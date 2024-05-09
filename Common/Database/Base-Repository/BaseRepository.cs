@@ -99,6 +99,7 @@ namespace CourseWork.Common.database.Base_Repository
                 using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
+                    entity.UpdatedAt = DateTime.Now;
                     _dbSet.Update(entity);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
@@ -113,6 +114,7 @@ namespace CourseWork.Common.database.Base_Repository
             }
             else
             {
+                entity.UpdatedAt = DateTime.Now;
                 _dbSet.Update(entity);
                 await _context.SaveChangesAsync();
                 return entity;
@@ -181,6 +183,10 @@ namespace CourseWork.Common.database.Base_Repository
             return await _dbSet.SingleOrDefaultAsync(entity => entity.id == id);
         }
 
-
+        //Return total count of all data
+        public async Task<int> GetTotalCount()
+        {
+            return await _dbSet.CountAsync();
+        }
     }
 }

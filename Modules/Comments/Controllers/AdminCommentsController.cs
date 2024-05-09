@@ -301,6 +301,14 @@ namespace CourseWork.Modules.Comments.Controllers
             return dataToResponse;
 
         }
+
+        //Return total number of comments in the system
+        [HttpGet("total-comments")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<int> TotalComments()
+        {
+            return await _commentsService.GetTotalComments();
+        }
     }
 
 }
