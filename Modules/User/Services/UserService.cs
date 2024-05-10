@@ -112,10 +112,7 @@ namespace CourseWork.Modules.User.Services
                 adminEntity.Name = incomingData.Name;
             }
 
-            if (incomingData.Password != null)
-            {
-                adminEntity.Password = BCrypt.Net.BCrypt.HashPassword(incomingData.Password);
-            }
+
             return await _userRepo.UpdateAsync(adminEntity);
         }
 
@@ -151,8 +148,8 @@ namespace CourseWork.Modules.User.Services
             }
             return await _userRepo.DeleteAsync(existingAdmin);
         }
-        
 
-        
+
+
     }
 }

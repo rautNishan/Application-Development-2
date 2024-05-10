@@ -54,7 +54,7 @@ namespace CourseWork.Modules.Blogs.Controller
         }
 
         [HttpGet("list")]
-        [ServiceFilter(typeof(RoleAuthFilter))]
+        // [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<PaginatedResponse<BlogEntity>> GetBlogList([FromQuery] string? page = "1", [FromQuery] ShortByEnum shortBy = ShortByEnum.Latest)  //ToDoType
         {
             //Getting page from query
@@ -71,7 +71,7 @@ namespace CourseWork.Modules.Blogs.Controller
 
 
         [HttpGet("info/{blog}")]
-        [ServiceFilter(typeof(RoleAuthFilter))]
+        // [ServiceFilter(typeof(RoleAuthFilter))]
         public async Task<GetBlogByIdResponseDto> GetBlogById(string blog)
         {
             GetBlogByIdResponseDto? existingBlog = await _blogService.GetBlogWithCommentsAsync(int.Parse(blog));

@@ -6,8 +6,7 @@
 
     }
 
-    public class UserResponseGetById
-    {
+    public class UserResponseGetById{
         public required int Id { get; set; }
         public required string UserName { get; set; }
     }

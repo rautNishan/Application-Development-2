@@ -101,7 +101,7 @@ namespace CourseWork.Modules.User.Controller
             }
         }
 
-        [HttpPost("update/{userId}")]
+        [HttpPatch("update/{userId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
 
         public async Task<UserResponseGetById> CreateAdmin(UserUpdateDto incomingData, string userId)
