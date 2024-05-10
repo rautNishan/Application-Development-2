@@ -298,7 +298,7 @@ namespace CourseWork.Modules.Votes.Controller
 
         [HttpPost("upvote-comment/{commentId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<VoteResponseDto> CommentUpVote(string commentId)
+        public async Task<VotesCommentDtos> CommentUpVote(string commentId)
         {
 
 
@@ -347,7 +347,7 @@ namespace CourseWork.Modules.Votes.Controller
                     existingVote.IsUpVote = true;
                     await _voteService.UpdateVote(existingVote);
                     HttpContext.Items["CustomMessage"] = "Upvote Successfully";
-                    return new VoteResponseDto { Id = commentInfo.id };
+                    return new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote, IsUpVote = existingVote.IsUpVote };
                 }
             }
 
@@ -379,7 +379,7 @@ namespace CourseWork.Modules.Votes.Controller
             commentInfo.Votes.Add(createdVote);
             await _commentsService.UpdateCommentsByOtherService(commentInfo);
             HttpContext.Items["CustomMessage"] = "Upvote Successfully";
-            VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
+            VotesCommentDtos responseData = new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote, IsUpVote = existingVote.IsUpVote };
             return responseData;
         }
 
