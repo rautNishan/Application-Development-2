@@ -45,6 +45,34 @@ namespace CourseWork.Modules.User.Controller
             }
         }
 
+        [HttpGet("authorized-info")]
+        [ServiceFilter(typeof(RoleAuthFilter))]
+        public async Task<AuthorizedUserDto> GetAuthorizedUser()
+        {
+            try
+            {
+                string userId = (HttpContext.Items["UserId"] as string)!;
+                UserEntity? result = await _userService.GetUserByIdAsync(int.Parse(userId));
+                if (result == null)
+                {
+                    throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
+                }
+
+                HttpContext.Items["CustomMessage"] = "User Get Successfully";
+                AuthorizedUserDto dataToSend = new AuthorizedUserDto
+                {
+                    Id = result.id,
+                    UserName = result.UserName,
+                    Email = result.Email,
+                    Name = result.Name
+                };
+                return dataToSend;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
 
         [HttpGet("info/{userId}")]

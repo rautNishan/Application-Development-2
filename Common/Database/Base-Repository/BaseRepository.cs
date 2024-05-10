@@ -27,6 +27,12 @@ namespace CourseWork.Common.database.Base_Repository
             return await _dbSet.ToListAsync();
         }
 
+         public async Task<IEnumerable<T>> GetAllAsyncExcludeSoftDelete()
+        {
+            return await _dbSet.Where(entity=>entity.DeletedAt == null).ToListAsync();
+        }
+
+
         public async Task<PaginatedResponse<T>> GetAllPaginatedAsync(int pageNumber, ShortByEnum shortBy)
         {
             int dataPerPage = 20; //Get through enum or constant

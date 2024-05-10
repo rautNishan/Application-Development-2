@@ -44,15 +44,15 @@ namespace CourseWork.Modules.Blogs.Services
         public async Task<BlogEntity> UpdateBlogs(BlogUpdateDto incomingData, CommonUserDto incomingUserInfo, BlogEntity blogEntity)
         {
 
-            if (incomingData.Title != null)
+            if (!string.IsNullOrEmpty(incomingData.Title))
             {
                 blogEntity.Title = incomingData.Title;
             }
-            if (incomingData.Content != null)
+            if (!string.IsNullOrEmpty(incomingData.Content))
             {
                 blogEntity.Content = incomingData.Content;
             }
-            if (incomingData.ImgUrl != null)
+            if (!string.IsNullOrEmpty(incomingData.ImgUrl))
             {
                 blogEntity.ImgUrl = incomingData.ImgUrl;
             }
@@ -171,7 +171,7 @@ namespace CourseWork.Modules.Blogs.Services
 
         public async Task<IEnumerable<BlogEntity>> GetPersonalBlogs(UserEntity user)
         {
-            IEnumerable<BlogEntity> blogs = await _blogRepo.GetAllAsync();
+            IEnumerable<BlogEntity> blogs = await _blogRepo.GetAllAsyncExcludeSoftDelete();
             return blogs.Where(b => b.PostUser.UserId == user.id);
         }
     }
