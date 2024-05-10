@@ -379,13 +379,13 @@ namespace CourseWork.Modules.Votes.Controller
             commentInfo.Votes.Add(createdVote);
             await _commentsService.UpdateCommentsByOtherService(commentInfo);
             HttpContext.Items["CustomMessage"] = "Upvote Successfully";
-            VotesCommentDtos responseData = new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote, IsUpVote = existingVote.IsUpVote };
+            VotesCommentDtos responseData = new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote };
             return responseData;
         }
 
         [HttpPost("downvote-comment/{commentId}")]
         [ServiceFilter(typeof(RoleAuthFilter))]
-        public async Task<VoteResponseDto> CommentDownVote(string commentId)
+        public async Task<VotesCommentDtos> CommentDownVote(string commentId)
         {
 
 
@@ -433,7 +433,7 @@ namespace CourseWork.Modules.Votes.Controller
                     existingVote.IsUpVote = false;
                     await _voteService.UpdateVote(existingVote);
                     HttpContext.Items["CustomMessage"] = "DownVote Successfully";
-                    return new VoteResponseDto { Id = commentInfo.id };
+                    return new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote, IsUpVote = existingVote.IsUpVote };
 
                 }
             }
@@ -464,7 +464,7 @@ namespace CourseWork.Modules.Votes.Controller
             commentInfo.Votes.Add(createdVote);
             await _commentsService.UpdateCommentsByOtherService(commentInfo);
             HttpContext.Items["CustomMessage"] = "DownVote Successfully";
-            VoteResponseDto responseData = new VoteResponseDto { Id = commentInfo.id };
+            VotesCommentDtos responseData = new VotesCommentDtos { Id = commentInfo.id, DownVote = commentInfo.DownVote, UpVote = commentInfo.UpVote };
             return responseData;
         }
     }
