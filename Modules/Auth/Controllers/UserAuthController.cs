@@ -105,7 +105,7 @@ namespace CourseWork.Modules.Auth.Controllers
             }
             HttpContext.Items["CustomMessage"] = "Change You Password";
             //Redirect user to login page in frontend
-            return Redirect("http://localhost:3000/reset-password");
+            return Redirect($"http://localhost:3000/reset-password/{email}");
         }
 
         [HttpPost("change-password")]
@@ -123,7 +123,7 @@ namespace CourseWork.Modules.Auth.Controllers
                 {
                     throw new HttpException(HttpStatusCode.NotFound, "Admin not found");
                 }
-    
+
                 bool isPasswordCorrect = _authService.checkPassword(user, incomingData.OldPassword);
                 if (!isPasswordCorrect)
                 {
